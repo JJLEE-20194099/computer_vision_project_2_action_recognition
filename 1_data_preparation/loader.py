@@ -5,11 +5,13 @@ class Loader(torch.utils.data.Dataset):
     def __init__(self, 
                 data_path, 
                 label_path,
-                num_person=2
+                num_person_in=5,
+                num_person_out=2
                 ):
         self.data_path = data_path
         self.label_path = label_path
-        self.num_person = num_person
+        self.num_person_in = num_person_in
+        self.num_person_out = num_person_out
         self.load_data()
     
     def load_data(self):
@@ -37,4 +39,40 @@ class Loader(torch.utils.data.Dataset):
         # Lấy 18 keypoints đối với 1 person
         self.V = 18
         # Lấy bao nhiêu person
-        self.M = self.num_person
+        self.M = self.num_person_out
+    
+    def __len__(self):
+        return len(self.sample_name)
+    
+    def __iter__(self):
+        return self
+
+    def __getitem__(self, index):
+        sample_name = self.sample_name[index]
+        sampel_path = os.path.join(self.data_path, sample_name)
+        with open(sample_path, 'r') as f:
+            video_info = json.load(f)
+        
+        data_numpy = np.zeros((self.C, self.T, self.V, self.num_person_in))
+
+        for frame_info in video_info['data']:
+            frame_index = frame_info['frame_index']
+            for m, skeleton_info in enumerate(frame_info["skeleton"]):
+                if (m >= self.num_person_in):
+                    break
+                pose = skeleton_info["pose"]
+                score = skeleton_info["score"]
+                data_numpy[0, frame_index, :, m] = pose[0::2]
+                data_numpy[1, frame_index, :, m] = pose[1::2]
+                data_numpy[2, frame_index, :, m] = score
+
+        data_numpy[0:2] = data_numpy[0:2] - 0.5
+        data_numpy[0][data_numpy[2] == 0] = 0
+        data_numpy[1][data_numpy[2] == 0] = 0
+
+        label = video_info["label"]
+        assert (label == self.label[index])
+
+        return data_numpy, label
+
+
