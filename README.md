@@ -1,0 +1,1 @@
+This is a project about how i build a system recognizing human action. This is a computer vision project in my university. 
