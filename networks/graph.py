@@ -8,6 +8,10 @@ class Graph():
     ):
         self.max_hop = max_hop
         self.dialation = dilation
+
+        self.get_edge()
+        self.hop_dis = get_hop_distance(self.num_node, self.edge, self.max_hop)
+
     
     def get_edge(self):
         self.num_node = 18
@@ -27,7 +31,8 @@ class Graph():
         adjacecy = range((self.num_node, self.num_node))
 
         for hop in range(valid_hop):
-            pass
+            adjacecy[self.hop_dis == hop] = 1
+        
         A = []
 
         for hop in valid_hop:
