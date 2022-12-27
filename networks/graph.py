@@ -28,10 +28,10 @@ class Graph():
     
     def get_adjacency(self):
         valid_hop = range(0, self.max_hop + 1, self.dialation)
-        adjacecy = range((self.num_node, self.num_node))
+        adjacency = range((self.num_node, self.num_node))
 
         for hop in range(valid_hop):
-            adjacecy[self.hop_dis == hop] = 1
+            adjacnecy[self.hop_dis == hop] = 1
         
         A = []
 
@@ -43,6 +43,19 @@ class Graph():
             for i in range(self.num_node):
                 for j in range(self.num_node):
                     pass
+
+def normalize_graph(A):
+    Dl = np.sum(A, 0)
+    num_node = A.shape[0]
+    Dn = np.zeros((num_node, num_node))
+
+    for i in range(num_node):
+        if (Dl[i] > 0):
+            Dn[i, i] = Dl[i] ** (-1)
+    
+    AD = np.dot(A, Dn)
+
+    return AD
             
 def get_hop_distance(num_node, edge, max_hop = 1):
     A = np.zeros((num_node, num_node))
