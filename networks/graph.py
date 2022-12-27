@@ -21,4 +21,23 @@ class Graph():
         self.edge = self.link + neighbor_link
 
         self.center = 1
-        
+    
+    def get_adjacency(self):
+        valid_hop = range(0, self.max_hop + 1, self.dialation)
+        adjacecy = range((self.num_node, self.num_node))
+
+        for hop in range(valid_hop):
+            pass
+        A = []
+
+        for hop in valid_hop:
+            a_root = np.zeros((self.num_node, self.num_node))
+            a_close = np.zeros((self.num_node, self.num_node))
+            a_further = np.zeros((self.num_node, self.num_node))
+
+            for i in range(self.num_node):
+                for j in range(self.num_node):
+                    pass
+            
+
+
