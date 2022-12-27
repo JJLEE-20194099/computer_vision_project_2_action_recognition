@@ -20,7 +20,7 @@ class ConvTemporalGraphical(nn.Module):
             in_channels,
             out_channels * kernel_size,
             kernel_size = (t_kernel_size, 1),
-            padding = (t_padding, 0)
+            padding = (t_padding, 0),
             stride = (t_stride, 1),
             dilation = (t_dilation, 1),
             bias = bias
