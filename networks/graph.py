@@ -39,5 +39,21 @@ class Graph():
                 for j in range(self.num_node):
                     pass
             
+def get_hop_distance(num_node, edge, max_hop = 1):
+    A = np.zeros((num_node, num_node))
 
+    for i, j in edge:
+        A[i, j] = 1
+        A[j, i] = 1
 
+    hop_dis = np.zeros((num_node, num_node)) + np.inf
+    transfer_mat = [np.linalg.matrix_power(A, d) for d in range(max_hop + 1)]
+    arrive_mat = (np.stack(transfer_mat) > 0)
+    for d in range(max_hop, -1, -1):
+        hop_dis[arrive_mat[d]] = d
+    
+    # Nếu i, j là hàng xóm => hop_dis[i, j] = 1
+    # Nếu i là node=> hop_dis[i, i] = 0
+    # Nếu  ngược lại => hop_dis[i, j] =  dương vô cùng
+    
+    return hop_dis
