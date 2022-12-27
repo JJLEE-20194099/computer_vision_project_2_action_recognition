@@ -86,3 +86,19 @@ def random_shift(data_numpy):
     data_shift[:, bias:bias + size, :, :] = data_numpy[:, begin:end, :, :]
 
     return data_shift
+
+def openpose_match(data_numpy):
+    C, T, V, M = data_numpy.shape
+    assert(C == 3)
+    score = data_numpy[2, :, :, :].sum(axis=1)
+    rank = (-score[0:T - 1]).argsort(axis=1).reshape(T - 1, M)
+    xy1 = data_numpy[0:2, 0:T - 1, :, :].reshape(2, T - 1, V, M, 1)
+    xy2 = data_numpy[0:2, 1:T, :, :].reshape(2, T - 1, V, 1, M)
+    
+    distance = ((xy2 - xy1)**2).sum(axis=2).sum(axis=0)
+    forward_map = np.zeros((T, M), dtype=int) - 1
+    forward_map[0] = range(M)
+
+    for m in range(M):
+        choose = (rank == m)
+        # ...and
