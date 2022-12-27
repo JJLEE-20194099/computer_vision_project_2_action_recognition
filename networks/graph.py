@@ -33,6 +33,8 @@ class Graph():
         for hop in range(valid_hop):
             adjacnecy[self.hop_dis == hop] = 1
         
+        normalize_adjacency = normalize_graph(adjacency)
+        
         A = []
 
         for hop in valid_hop:
@@ -42,7 +44,23 @@ class Graph():
 
             for i in range(self.num_node):
                 for j in range(self.num_node):
-                    pass
+                    if (self.hop_dis[i, j] == hop):
+                        if (self.hop_dis[j, self.center] == self.hop_dis[i, self.center]):
+                            a_root[j, i] = normalize_adjacency[j, i]
+                        elif(self.hop_dis[j, self.center] > self.hop_dis[i, self.center]):
+                            a_close[j, i] = normalize_adjacency[j, i]
+                        else:
+                            a_further[j, i] = normalize_adjacency[j, i]
+            
+            if (hop == 0):
+                A.append(a_root)
+            else:
+                A.append(a_root + a_close)
+                A.append(a_further)
+        
+        A = np.stack(A)
+        self.A = A
+
 
 def normalize_graph(A):
     Dl = np.sum(A, 0)
